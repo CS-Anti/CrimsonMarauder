@@ -74,7 +74,7 @@ async def on_connect():
   """)
 
 @bot.command() 
-async def whspam(ctx):
+async def whs(ctx):
  guild = ctx.message.guild
  while True:
   async with aiohttp.ClientSession() as session:
