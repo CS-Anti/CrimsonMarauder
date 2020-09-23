@@ -22,19 +22,13 @@ import requests as req
 import aiohttp
 from threading import Thread as thr
 from discord.ext.commands import *
-from discord.ext import commands, tasks
 import asyncio
 import datetime
 import os
 import time
 import json
-from discord import Permissions
 import praw
 import colorama
-from colorama import Fore, Style, init
-from discord.ext.commands import Bot
-from urllib.parse import urlencode
-import urllib.parse, urllib.request, requests, aiohttp
 from discord.utils import get
 import string
 import subprocess
