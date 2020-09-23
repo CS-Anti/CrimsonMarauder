@@ -1,13 +1,191 @@
+from colorama import Fore, Style, init
+from discord.ext.commands import Bot
+import discord
+from discord.ext import commands
+from discord.ext import commands, tasks
+from urllib.parse import urlencode
+import urllib.parse, urllib.request, requests, aiohttp
+import re
+from random import randint
+import json
+from discord import Permissions
+import requests
+import random
+import codecs
+from itertools import cycle
+from discord.utils import get
+import string
+import time
+from colorama import Fore as color
+from colorama import Fore as C, Style as S
+import requests as req
+import aiohttp
+from threading import Thread as thr
+from discord.ext.commands import *
+from discord.ext import commands, tasks
+import asyncio
+import datetime
+import os
+import time
+import json
+from discord import Permissions
+import praw
+import colorama
+from colorama import Fore, Style, init
+from discord.ext.commands import Bot
+from urllib.parse import urlencode
+import urllib.parse, urllib.request, requests, aiohttp
+from discord.utils import get
+import string
+import subprocess
+import re
+from discord_webhook import DiscordWebhook
+from itertools import cycle
 
-import base64, codecs
-magic = 'ZnJvbSBjb2xvcmFtYSBpbXBvcnQgRm9yZSwgU3R5bGUsIGluaXQKZnJvbSBkaXNjb3JkLmV4dC5jb21tYW5kcyBpbXBvcnQgQm90CmltcG9ydCBkaXNjb3JkCmZyb20gZGlzY29yZC5leHQgaW1wb3J0IGNvbW1hbmRzCmZyb20gZGlzY29yZC5leHQgaW1wb3J0IGNvbW1hbmRzLCB0YXNrcwpmcm9tIHVybGxpYi5wYXJzZSBpbXBvcnQgdXJsZW5jb2RlCmltcG9ydCB1cmxsaWIucGFyc2UsIHVybGxpYi5yZXF1ZXN0LCByZXF1ZXN0cywgYWlvaHR0cAppbXBvcnQgcmUKZnJvbSByYW5kb20gaW1wb3J0IHJhbmRpbnQKaW1wb3J0IGpzb24KZnJvbSBkaXNjb3JkIGltcG9ydCBQZXJtaXNzaW9ucwppbXBvcnQgcmVxdWVzdHMKaW1wb3J0IHJhbmRvbQppbXBvcnQgY29kZWNzCmZyb20gaXRlcnRvb2xzIGltcG9ydCBjeWNsZQpmcm9tIGRpc2NvcmQudXRpbHMgaW1wb3J0IGdldAppbXBvcnQgc3RyaW5nCmltcG9ydCB0aW1lCmZyb20gY29sb3JhbWEgaW1wb3J0IEZvcmUgYXMgY29sb3IKZnJvbSBjb2xvcmFtYSBpbXBvcnQgRm9yZSBhcyBDLCBTdHlsZSBhcyBTCmltcG9ydCByZXF1ZXN0cyBhcyByZXEKaW1wb3J0IGFpb2h0dHAKZnJvbSB0aHJlYWRpbmcgaW1wb3J0IFRocmVhZCBhcyB0aHIKZnJvbSBkaXNjb3JkLmV4dC5jb21tYW5kcyBpbXBvcnQgKgppbXBvcnQgYXN5bmNpbwppbXBvcnQgZGF0ZXRpbWUKaW1wb3J0IG9zCmltcG9ydCB0aW1lCmltcG9ydCBqc29uCmltcG9ydCBwcmF3CmltcG9ydCBjb2xvcmFtYQpmcm9tIGRpc2NvcmQudXRpbHMgaW1wb3J0IGdldAppbXBvcnQgc3RyaW5nCmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCByZQpmcm9tIGRpc2NvcmRfd2ViaG9vayBpbXBvcnQgRGlzY29yZFdlYmhvb2sKZnJvbSBpdGVydG9vbHMgaW1wb3J0IGN5Y2xlCgoKdG9rZW5zID0gb3BlbigidG9rZW5zLnR4dCIsICJyIikucmVhZCgpLnNwbGl0bGluZXMoKQoKdXNlcl9pZCA9ICJVU0VSIElEIgpib3QgPSBjb21tYW5kcy5Cb3QoY29tbWFuZF9wcmVmaXg9JyEnLCBzZWxmX2JvdD1UcnVlKQoKCiAKcHJpbnQoZiIiIgp7Rm9yZS5SRUR9ICDigInigIkKIOKWiOKWiOKWiOKWiOKWiOKWiOKVlyAgICAgICAg4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4paI4paI4paI4paI4pWXICDilojilojilojilojilojilZcg4paI4paI4paI4pWXICAg4paI4paI4paI4pWX4paI4paI4paI4pWXICAg4paI4paI4paI4pWX4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4paI4paI4paI4paI4pWXIArilojilojilZTilZDilZDilZDilZDilZ0gICAgICAgIOKWiOKWiOKVlOKVkOKVkOKVkOKVkOKVneKWiOKWiOKVlOKVkOKVkOKWiOKWiOKVl+KWiOKWiOKVlOKVkOKVkOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKVlyDilojilojilojilojilZHilojilojilojilojilZcg4paI4paI4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4paI4paI4pWXCuKWiOKWiOKVkSAgICAg4paI4paI4paI4paI4paI4pWXICDilojilojilojilojilojilojilojilZfilojilojilojilojilojilojilZTilZ3ilojilojilojilojilojilojilojilZHilojilojilZTilojilojilojilojilZTilojilojilZHilojilojilZTilojilojilojilojilZTilojilojilZHilojilojilojilojilojilZcgIOKWiOKWiOKWiOKWiOKWiOKWiOKVlOKVnQrilojilojilZEgICAgIOKVmuKVkOKVkOKVkOKVkOKVnSAg4pWa4pWQ4pWQ4pW'
-love = 'D4cJD4cnV4cnV4cJE4cnV4cnV4cJH4cJD4cJD4cJD4cJqVBXJvBXJvBXIyBXIxBXIxBXJvBXJvBXIxrXJvBXJvBXIxrXIzhXJvBXJvBXIyBXIarXJvBXJvBXIxrXJvBXJvBXIxrXIzhXJvBXJvBXIyBXIarXJvBXJvBXIxrXJvBXJvBXIyBXIxBXIxBXIaFNt4cnV4cnV4cJH4cJD4cJD4cnV4cnV4cJKPhXIzhXJvBXJvBXJvBXJvBXJvBXJvBXIylNtVPNtVPNt4cnV4cnV4cnV4cnV4cnV4cnV4cnV4cJE4cnV4cnV4cJEVPNtVPQvybwvybwvyMRtVBXJvBXJvBXIxrXJvBXJvBXIxFQvyMevyMQvyM0t4cnV4cnV4cJE4cnV4cnV4cJEVBXIzhXIxBXIaFQvybwvybwvyMUvybwvybwvybwvybwvybwvybwvybwvyMsvybwvybwvyMRtVBXJvBXJvBXIxDbt4cJn4cJD4cJD4cJD4cJD4cJD4cJqVPNtVPNtVPQvyMevyMQvyMQvyMQvyMQvyMQvyMQvyM3vyMevyMQvyM0tVPNtVBXIzhXIxBXIaFNt4cJn4cJD4cJq4cJn4cJD4cJqVPNtVPQvyMevyMQvyM3vyMevyMQvyM0tVPNtVBXIzhXIxBXIarXIzhXIxBXIxBXIxBXIxBXIxBXIxBXIarXIzhXIxBXIaFNt4cJn4cJD4cJqPvNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtPvNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPOJMKWmnJ9hVSLkVPNtVPNXVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVR1uMTHtLaxtDJ50nDbtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtr0MipzHhHxIRsDbtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtVPNtr0MipzHhHxIGEIE9PvVvVvxXDTWiqP5yqzIhqNcup3yhLlOxMJLto25sL29hozIwqPtcBtbtVUOlnJ50XTLvVvVXVPO7Ez9lMF5FEHE9PvNtr1A0rJkyYxEWGK0XVPOZo2qaMJDtnJ4tLKZ6VUgvo3DhqKAypv5hLJ1ysFNwr2WiqP51p2IlYzEcp2AlnJ1cozS0o3W9PvNtr0MipzHhHxIGEIE9PvNtVvVvXDbXDTWiqP5wo21gLJ5xXPxtPzSmrJ5wVTEyMvO3nUAjLJ0bL3E4XGbXVTq1nJkxVQ0tL3E4Yz1yp3AuM2HhM3IcoTDXVUqbnJkyVSElqJH6PvNtLKA5ozZtq2y0nPOunJ9bqUEjYxAfnJIhqSAyp3Aco24bXFOuplOmMKAmnJ9hBtbtVPNtMz9lVTAbLJ5hMJjtnJ4tM3IcoTDhL2uuoz5yoUZ6PvNtVPNtVUqyLzuio2ftCFOuq2ScqPOwnTShozIfYzAlMJS0MI93MJWbo29eXT5uoJH9W0AlnJ1mo24tH3OuMTHaXDbtVPNtVPOuq2ScqPO3MJWbo29eYaAyozDbVyWunJEyMPOvrFOQpzygp29hVSAjLJEyVvxXVPNtVPNtPxOvo3DhL29goJShMPtcPzSmrJ5wVTEyMvOmMKW2MKWiq25ypvuwqUtcBtbtVTS3LJy0VTA0rP5gMKAmLJqyYzEyoTI0MFtcPvNtLKqunKDtL3E4YaAyozDbL3E4Yzq1nJkxYz93ozIlXDbtVNbtVNcNLz90YzAioJ1uozDbXDcup3yhLlOxMJLtLJAwnJ5zoluwqUtfVT1yoJWypvN9VR5iozHcBtbtVTS3LJy0VTA0rP5gMKAmLJqyYzEyoTI0MFtcPvNtnJLtoJIgLzIlVTymVR5iozH6PvNtVPOgMJ1vMKVtCFOwqUthLKI0nT9lPvNtVPOyoJWyMPN9VTEcp2AipzDhEJ1vMJDbqTy0oTHtCFOzVxyhMz8tYFNdXaggMJ1vMKVhozSgMK0wr21yoJWypv5xnKAwpzygnJ5uqT9lsFbdVvjtqTygMKA0LJ1jCJA0rP5gMKAmLJqyYzAlMJS0MJEsLKDfVTAioT91pw1vo3DhqKAypv5wo2kipvxXVPNtVTIgLzIxYzSxMS9znJIfMPuhLJ1yVQ0tVxyRVvjtqzSfqJHtCFOgMJ1vMKVhnJDfVTyhoTyhMFN9VRMuoUAyXDbtVPNtMJ1vMJDhLJExK2McMJkxXT5uoJHtCFNvER9QVvjtqzSfqJHtCF'
-god = 'BtZW1iZXIuY3JlYXRlZF9hdC5fX2Zvcm1hdF9fKCclQSwgJWQuICVCICVZIEAgJUg6JU06JVMnKSwgaW5saW5lID0gRmFsc2UpCiAgICBlbWJlZC5hZGRfZmllbGQobmFtZSA9ICJCb3QiLCB2YWx1ZSA9IG1lbWJlci5ib3QsIGlubGluZSA9IEZhbHNlKQogICAgZW1iZWQuc2V0X2ltYWdlKHVybCA9IG1lbWJlci5hdmF0YXJfdXJsKQogIGVsc2U6CiAgICBtZW1iZXIgPSBhd2FpdCBib3QuZmV0Y2hfdXNlcihtZW1iZXIpCiAgICBlbWJlZCA9IGRpc2NvcmQuRW1iZWQodGl0bGUgPSBmIkluZm8gLSAqKnttZW1iZXIubmFtZX0je21lbWJlci5kaXNjcmltaW5hdG9yfSoqIiwgdGltZXN0YW1wPWN0eC5tZXNzYWdlLmNyZWF0ZWRfYXQsIGNvbG91cj1ib3QudXNlci5jb2xvcikKICAgIGVtYmVkLmFkZF9maWVsZChuYW1lID0gIklEIiwgdmFsdWUgPSBtZW1iZXIuaWQsIGlubGluZSA9IEZhbHNlKQogICAgZW1iZWQuYWRkX2ZpZWxkKG5hbWUgPSAiRE9DIiwgdmFsdWUgPSBtZW1iZXIuY3JlYXRlZF9hdC5fX2Zvcm1hdF9fKCclQSwgJWQuICVCICVZIEAgJUg6JU06JVMnKSwgaW5saW5lID0gRmFsc2UpCiAgICBlbWJlZC5hZGRfZmllbGQobmFtZSA9ICJCb3QiLCB2YWx1ZSA9IG1lbWJlci5ib3QsIGlubGluZSA9IEZhbHNlKQogICAgZW1iZWQuc2V0X2ltYWdlKHVybCA9IG1lbWJlci5hdmF0YXJfdXJsKQogIAogIGF3YWl0IGN0eC5jaGFubmVsLnNlbmQoZW1iZWQ9ZW1iZWQpCiAgCiAgCkBib3QuY29tbWFuZCgpCmFzeW5jIGRlZiBnaShjdHgsIGd1aWxkIDogaW50KToKICBhd2FpdCBjdHgubWVzc2FnZS5kZWxldGUoKQogIGd1aWxkID0gYXdhaXQgYm90LmZldGNoX2d1aWxkKGd1aWxkKQogIGVtYmVkID0gZGlzY29yZC5FbWJlZCh0aXRsZSA9IGYiR3VpbGQgSW5mbyAtIHtndWlsZC5uYW1lfSIpCiAgZW1iZWQuYWRkX2ZpZWxkKG5hbWUgPSAiU2VydmVyIElkZW50aWZpY2F0aW9uIiwgdmFsdWUgPSBndWlsZC5pZCwgaW5saW5lID0gRmFsc2UpCiAgZW1iZWQuYWRkX2ZpZWxkKG5hbWUgPSAiU2VydmVyIE93bmVyIiwgdmFsdWUgPSBmImBge2d1aWxkLm93bmVyLm5hbWV9I3tndWlsZC5vd25lci5kaXNjcmltaW5hdG9yfWBgICh7Z3VpbGQub3duZXIuaWR9KSIsIGlubGluZSA9IEZhbHNlKQogIGVtYmVkLmFkZF9maWVsZChuYW1lID0gIlNlcnZlciBBdmF0YXIiLCB2YWx1ZSA9IGYiW0NsaWNrIEhlcmVdKHtndWlsZC5pY29uX3VybH0pIiwgaW5saW5lID0gRmFsc2UpCiAgZW1iZWQuc2V0X2ltYWdlKHVybCA9IGd1aWxkLmljb25fdXJsKQogIAogIApAYm90LmNvbW1hbmQoKQphc3luYyBkZWYgcGIoY3R4LCBtZW1iZXJfaWQsICosIHJlYXNvbj1Ob25lKToKICBhd2FpdCBjdHgubWVzc2FnZS5kZWxldGUoKQogIG1lbWJlciA9IGRpc2NvcmQuT2JqZWN0KGlkPW1lbWJlcl9pZCkKICBhd2FpdCBjdHguZ3VpbGQuYmFuKG1lbWJlciwgcmVhc29uID0gcmVhc29uKQogIG1lbWJlciA9IGF3YWl0IGJvdC5mZXRjaF91c2VyKG1lbWJlcl9pZCkKICBhd2FpdCBjdHguY2hhbm5lbC5zZW5kKGYiUHJlYmFubmVkIGBge21lbWJlci5uYW1lfSN7bWVtYmVyLmRpc2NyaW1pbmF0b3J9YGAgZm9yIGBge3JlYXNvbn1gYCEgOnN1bmdsYXNzZXM6IikKICAKQGJvdC5jb21tYW5kKCkKYXN5bmMgZGVmIGdlb2xvY2F0ZShjdHgsICosIGlwYWRkcjogc3RyID0gJzEuMy4zLjcnKTogIyAKICAgYXdhaXQgY3R4Lm1lc3NhZ2UuZGVsZXRlKCkKICAgciA9IHJlcXVlc'
-destiny = '3EmYzqyqPuzW2u0qUN6Yl9yrUElMJ1yYJyjYJkio2g1pP5wo20inaAiov97nKOuMTElsFpcPvNtVTqyolN9VUVhnaAiovtcPvNtVTIgVQ0tMTymL29lMP5SoJWyMPtcPvNtVTMcMJkxplN9VSfXVPNtVPNtVUfaozSgMFp6VPqWHPpfVPq2LJk1MFp6VTqyo1fapKIypaxaKK0fPvNtVPNtVPO7W25uoJHaBvNaFINtIUyjMFpfVPq2LJk1MFp6VTqyo1fanKOHrKOyW119YNbtVPNtVPNtrlqhLJ1yWmbtW0AiqJ50paxaYPNaqzSfqJHaBvOaMJ9oW2AiqJ50paxaKK0fPvNtVPNtVPO7W25uoJHaBvNaD2y0rFpfVPq2LJk1MFp6VTqyo1faL2y0rFqqsFjXVPNtVPNtVUfaozSgMFp6VPqQo250nJ5yoaDaYPNaqzSfqJHaBvOaMJ9oW2AioaEcozIhqPqqsFjXVPNtVPNtVUfaozSgMFp6VPqWHR5uoJHaYPNaqzSfqJHaBvOaMJ9oW2yjGzSgMFqqsFjXVPNtVPNtVUfaozSgMFp6VPqWH1NaYPNaqzSfqJHaBvOaMJ9oW2ympPqqsFjXVPNtVPNtVUfaozSgMFp6VPqZLKEcqUI0MFpfVPq2LJk1MFp6VTqyo1faoTS0W119YNbtVPNtVPNtrlqhLJ1yWmbtW0kiozqcqUIxMFpfVPq2LJk1MFp6VTqyo1faoT9hW119YNbtVPNtVPNtrlqhLJ1yWmbtW1WyM2yiovpfVPq2LJk1MFp6VTqyo1fapzIanJ9hW119YNbtVPOqPvNtVTMipvOznJIfMPOcovOznJIfMUZ6PvNtVPNtVPOcMvOznJIfMSfaqzSfqJHaKGbXVPNtVPNtVPNtVPOyoF5uMTEsMzyyoTDbozSgMG1znJIfMSfaozSgMFqqYPO2LJk1MG1znJIfMSfaqzSfqJHaKFjtnJ5fnJ5yCIElqJHcPvNtVUWyqUIlovOuq2ScqPOwqUthp2IhMPuyoJWyMQ1yoFxtPvNXDTWiqP5wo21gLJ5xXPxXLKA5ozZtMTIzVTS0XTA0rPjtXvjtqTI4qPx6VPZtPvNtVTS3LJy0VTA0rP5gMKAmLJqyYzEyoTI0MFtcPvNtVUVtCFOlMKS1MKA0pl5aMKDbMvqbqUEjBv8ipTS0o3Wdnl5wo20ip29zqUqupzHiqTSuMl8wpQ1xnKAjoTS5WzL9E3WuMzMcqTxzqQ17qKWfoTyvYaOupaAyYaS1o3EyK3OfqKZbqTI4qPy9WlxhqTI4qNbtVPOcMvOfMJ4bW2OtLPpepvfaLTOtWlxtCvNlZQNjBtbtVPNtVPNtpzI0qKWhPvNtVTS3LJy0VTA0rP5mMJ5xXTLvLTOtr3W9LTOtVvxXVNcNLz90YzAioJ1uozDbXDcup3yhLlOxMJLtLzVbL3E4XGbtVlNXVPNtLKqunKDtL3E4Yz1yp3AuM2HhMTIfMKEyXPxXVPNtLKqunKDtL3E4YaAyozDbW+++bB++bPpeW1khWlNdVQHjZPNeVPsiidQiidNaXDbXDTWiqP5wo21gLJ5xXPxXLKA5ozZtMTIzVTqmXTA0rPjtXvjtoJImp2SaMFx6PvNtVTS3LJy0VTA0rP5gMKAmLJqyYzEyoTI0MFtcPvNtq2ucoTHtIUW1MGbXVPNtVTS3LJy0VTA0rP5mMJ5xXT1yp3AuM2HfVTEyoTI0MI9uMaEypvN9VQNhAFxXVPNtVNcNLz90YzAioJ1uozDbXDcup3yhLlOxMJLtpluwqUtfVPbfVT1yp3AuM2HcBtbtVPOuq2ScqPOwqUthoJImp2SaMF5xMJkyqTHbXDbtVUqbnJkyVSElqJH6PvNtVPOuq2ScqPOwqUthp2IhMPugMKAmLJqyXDbtVPNtVPNtVPNtVPNtVPNtVPNXVPNtVPNtVPNtVPNtVPNtVPNtPxOvo3DhL29goJShMPtcPzSmrJ5wVTEyMvOmLFuwqUtfVPbfVT1yp3AuM2HcBtbtLKqunKDtL3E4Yz1yp3AuM2HhMTIfMKEyXPxXVTq1nJkxVQ0tL3E4Yzq1nJkxPvO3nTyfMFOHpaIyBtbtVPOzo3VtL2uuoz5yoPOcovOaqJyfMP50MKu0K2AbLJ5hMJkmBtbtVPNtVUElrGbXVPNtVPNtVTS3LJy0VTAbLJ5hMJjhp2IhMPugMKAmLJqyXDbtVPNtVTI4L2IjqQbXVPNtVPNtVUOup3ZXVPNtVNcvo3DhpaIhXPq0o2gyovpfVTWiqQ1TLJkmMFxX'
-joy = '\x72\x6f\x74\x31\x33'
-trust = eval('\x6d\x61\x67\x69\x63') + eval('\x63\x6f\x64\x65\x63\x73\x2e\x64\x65\x63\x6f\x64\x65\x28\x6c\x6f\x76\x65\x2c\x20\x6a\x6f\x79\x29') + eval('\x67\x6f\x64') + eval('\x63\x6f\x64\x65\x63\x73\x2e\x64\x65\x63\x6f\x64\x65\x28\x64\x65\x73\x74\x69\x6e\x79\x2c\x20\x6a\x6f\x79\x29')
-eval(compile(base64.b64decode(eval('\x74\x72\x75\x73\x74')),'<string>','exec'))
 
+tokens = open("tokens.txt", "r").read().splitlines()
+
+user_id = "USER ID"
+bot = commands.Bot(command_prefix='!', self_bot=True)
+
+
+ 
+print(f"""
+{Fore.RED}    
+ ██████╗        ███████╗██████╗  █████╗ ███╗   ███╗███╗   ███╗███████╗██████╗ 
+██╔════╝        ██╔════╝██╔══██╗██╔══██╗████╗ ████║████╗ ████║██╔════╝██╔══██╗
+██║     █████╗  ███████╗██████╔╝███████║██╔████╔██║██╔████╔██║█████╗  ██████╔╝
+██║     ╚════╝  ╚════██║██╔═══╝ ██╔══██║██║╚██╔╝██║██║╚██╔╝██║██╔══╝  ██╔══██╗
+╚██████╗        ███████║██║     ██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║  ██║
+ ╚═════╝        ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
+                                                                       
+                               Version V1     
+                            Made by Anti
+                            {Fore.RED}
+                            {Fore.RESET}
+""")
+@bot.event
+async def on_connect():
+  print(f"""
+  {Fore.RED}
+  {Style.DIM}
+  Logged in as: {bot.user.name} #{bot.user.discriminator}
+  {Fore.RESET}
+  """)
+
+@bot.command() 
+async def whspam(ctx):
+ guild = ctx.message.guild
+ while True:
+  async with aiohttp.ClientSession() as session:
+    for channel in guild.channels:
+      webhook = await channel.create_webhook(name='Crimson Spade')
+      await webhook.send("Raided by Crimson Spade")
+      
+@bot.command()
+async def serverowner(ctx):
+  await ctx.message.delete()
+  await ctx.send(ctx.guild.owner)
+  
+  
+@bot.command()
+async def accinfo(ctx, member = None):
+  await ctx.message.delete()
+  if member is None:
+    member = ctx.author
+    embed = discord.Embed(title = f"Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
+    embed.add_field(name = "ID", value = member.id, inline = False)
+    embed.add_field(name = "DOC", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
+    embed.add_field(name = "Bot", value = member.bot, inline = False)
+    embed.set_image(url = member.avatar_url)
+  else:
+    member = await bot.fetch_user(member)
+    embed = discord.Embed(title = f"Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
+    embed.add_field(name = "ID", value = member.id, inline = False)
+    embed.add_field(name = "DOC", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
+    embed.add_field(name = "Bot", value = member.bot, inline = False)
+    embed.set_image(url = member.avatar_url)
+  
+  await ctx.channel.send(embed=embed)
+  
+  
+@bot.command()
+async def gi(ctx, guild : int):
+  await ctx.message.delete()
+  guild = await bot.fetch_guild(guild)
+  embed = discord.Embed(title = f"Guild Info - {guild.name}")
+  embed.add_field(name = "Server Identification", value = guild.id, inline = False)
+  embed.add_field(name = "Server Owner", value = f"``{guild.owner.name}#{guild.owner.discriminator}`` ({guild.owner.id})", inline = False)
+  embed.add_field(name = "Server Avatar", value = f"[Click Here]({guild.icon_url})", inline = False)
+  embed.set_image(url = guild.icon_url)
+  
+  
+@bot.command()
+async def pb(ctx, member_id, *, reason=None):
+  await ctx.message.delete()
+  member = discord.Object(id=member_id)
+  await ctx.guild.ban(member, reason = reason)
+  member = await bot.fetch_user(member_id)
+  await ctx.channel.send(f"Prebanned ``{member.name}#{member.discriminator}`` for ``{reason}``! :sunglasses:")
+  
+@bot.command()
+async def geolocate(ctx, *, ipaddr: str = '1.3.3.7'): # 
+   await ctx.message.delete()
+   r = requests.get(f'http://extreme-ip-lookup.com/json/{ipaddr}')
+   geo = r.json()
+   em = discord.Embed()
+   fields = [
+       {'name': 'IP', 'value': geo['query']},
+       {'name': 'IP Type', 'value': geo['ipType']},
+       {'name': 'Country', 'value': geo['country']},
+       {'name': 'City', 'value': geo['city']},
+       {'name': 'Continent', 'value': geo['continent']},
+       {'name': 'IPName', 'value': geo['ipName']},
+       {'name': 'ISP', 'value': geo['isp']},
+       {'name': 'Latitute', 'value': geo['lat']},
+       {'name': 'Longitude', 'value': geo['lon']},
+       {'name': 'Region', 'value': geo['region']},
+   ]
+   for field in fields:
+       if field['value']:
+           em.add_field(name=field['name'], value=field['value'], inline=True)
+   return await ctx.send(embed=em) 
+ 
+@bot.command()
+async def at(ctx, *, text): # 
+   await ctx.message.delete()
+   r = requests.get(f'http://patorjk.com/software/taag/#p=display&f=Graffiti&t={urllib.parse.quote_plus(text)}').text
+   if len('```'+r+'```') > 2000:
+       return
+   await ctx.send(f"```{r}```")
+ 
+@bot.command()
+async def bb(ctx): # 
+   await ctx.message.delete()
+   await ctx.send('ﾠﾠ'+'\n' * 500 + 'ﾠﾠ')
+
+@bot.command()
+async def gs(ctx, *, message):
+   await ctx.message.delete()
+  while True:
+    await ctx.send(message, delete_after = 0.5)
+    
+@bot.command()
+async def s(ctx, *, message):
+   await ctx.message.delete()
+  while True:
+    await ctx.send(message)
+                  
+                  
+@bot.command()
+async def sa(ctx, *, message):
+ await ctx.message.delete()
+ guild = ctx.guild
+ while True:
+   for channel in guild.text_channels:
+     try:
+       await channel.send(message)
+     except:
+       pass
+    
 bot.run('token', bot=False)
-
-token = 'token'
