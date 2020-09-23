@@ -64,7 +64,7 @@ print(f"""
                             {Fore.RED}
                             {Fore.RESET}
 """)
-@bot.event
+@Red.event
 async def on_connect():
   print(f"""
   {Fore.RED}
@@ -73,7 +73,7 @@ async def on_connect():
   {Fore.RESET}
   """)
 
-@bot.command() 
+@Red.command() 
 async def whs(ctx):
  guild = ctx.message.guild
  while True:
@@ -82,13 +82,13 @@ async def whs(ctx):
       webhook = await channel.create_webhook(name='Crimson Spade')
       await webhook.send("Raided by Crimson Spade")
       
-@bot.command()
+@Red.command()
 async def serverowner(ctx):
   await ctx.message.delete()
   await ctx.send(ctx.guild.owner)
   
   
-@bot.command()
+@Red.command()
 async def accinfo(ctx, member = None):
   await ctx.message.delete()
   if member is None:
@@ -109,7 +109,7 @@ async def accinfo(ctx, member = None):
   await ctx.channel.send(embed=embed)
   
   
-@bot.command()
+@Red.command()
 async def gi(ctx, guild : int):
   await ctx.message.delete()
   guild = await bot.fetch_guild(guild)
@@ -120,7 +120,7 @@ async def gi(ctx, guild : int):
   embed.set_image(url = guild.icon_url)
   
   
-@bot.command()
+@Red.command()
 async def pb(ctx, member_id, *, reason=None):
   await ctx.message.delete()
   member = discord.Object(id=member_id)
@@ -128,7 +128,7 @@ async def pb(ctx, member_id, *, reason=None):
   member = await bot.fetch_user(member_id)
   await ctx.channel.send(f"Prebanned ``{member.name}#{member.discriminator}`` for ``{reason}``! :sunglasses:")
   
-@bot.command()
+@Red.command()
 async def geolocate(ctx, *, ipaddr: str = '1.3.3.7'): # 
    await ctx.message.delete()
    r = requests.get(f'http://extreme-ip-lookup.com/json/{ipaddr}')
@@ -151,7 +151,7 @@ async def geolocate(ctx, *, ipaddr: str = '1.3.3.7'): #
            em.add_field(name=field['name'], value=field['value'], inline=True)
    return await ctx.send(embed=em) 
  
-@bot.command()
+@Red.command()
 async def at(ctx, *, text): # 
    await ctx.message.delete()
    r = requests.get(f'http://patorjk.com/software/taag/#p=display&f=Graffiti&t={urllib.parse.quote_plus(text)}').text
@@ -159,25 +159,25 @@ async def at(ctx, *, text): #
        return
    await ctx.send(f"```{r}```")
  
-@bot.command()
+@Red.command()
 async def bb(ctx): # 
    await ctx.message.delete()
    await ctx.send('ﾠﾠ'+'\n' * 500 + 'ﾠﾠ')
 
-@bot.command()
+@Red.command()
 async def gs(ctx, *, message):
    await ctx.message.delete()
   while True:
     await ctx.send(message, delete_after = 0.5)
     
-@bot.command()
+@Red.command()
 async def s(ctx, *, message):
    await ctx.message.delete()
   while True:
     await ctx.send(message)
                   
                   
-@bot.command()
+@Red.command()
 async def sa(ctx, *, message):
  await ctx.message.delete()
  guild = ctx.guild
@@ -188,4 +188,4 @@ async def sa(ctx, *, message):
      except:
        pass
     
-bot.run('token', bot=False)
+Red.run('token', bot=False)
