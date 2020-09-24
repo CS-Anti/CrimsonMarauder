@@ -45,7 +45,7 @@ from itertools import cycle
 user_id = "USER ID"
 bot = commands.Bot(command_prefix='!', bot=False)
 
-
+#do !help for command info
  
 print(f"""
 {Fore.RED}    
