@@ -42,11 +42,8 @@ import re
 from discord_webhook import DiscordWebhook
 from itertools import cycle
 
-
-tokens = open("tokens.txt", "r").read().splitlines()
-
 user_id = "USER ID"
-bot = commands.Bot(command_prefix='!', self_bot=True)
+bot = commands.Bot(command_prefix='!', bot=False)
 
 
  
@@ -64,15 +61,6 @@ print(f"""
                             {Fore.RED}
                             {Fore.RESET}
 """)
-@Red.event
-async def on_connect():
-  print(f"""
-  {Fore.RED}
-  {Style.DIM}
-  Logged in as: {bot.user.name} #{bot.user.discriminator}
-  {Fore.RESET}
-  """)
-
 @Red.command() 
 async def whs(ctx):
  guild = ctx.message.guild
@@ -80,77 +68,11 @@ async def whs(ctx):
   async with aiohttp.ClientSession() as session:
     for channel in guild.channels:
       webhook = await channel.create_webhook(name='Crimson Spade')
-      await webhook.send("Raided by Crimson Spade")
-      
+      await webhook.send("Raided by Crimson Spade")   
 @Red.command()
 async def serverowner(ctx):
   await ctx.message.delete()
-  await ctx.send(ctx.guild.owner)
-  
-  
-@Red.command()
-async def accinfo(ctx, member = None):
-  await ctx.message.delete()
-  if member is None:
-    member = ctx.author
-    embed = discord.Embed(title = f"Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
-    embed.add_field(name = "ID", value = member.id, inline = False)
-    embed.add_field(name = "DOC", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
-    embed.add_field(name = "Bot", value = member.bot, inline = False)
-    embed.set_image(url = member.avatar_url)
-  else:
-    member = await bot.fetch_user(member)
-    embed = discord.Embed(title = f"Info - **{member.name}#{member.discriminator}**", timestamp=ctx.message.created_at, colour=bot.user.color)
-    embed.add_field(name = "ID", value = member.id, inline = False)
-    embed.add_field(name = "DOC", value = member.created_at.__format__('%A, %d. %B %Y @ %H:%M:%S'), inline = False)
-    embed.add_field(name = "Bot", value = member.bot, inline = False)
-    embed.set_image(url = member.avatar_url)
-  
-  await ctx.channel.send(embed=embed)
-  
-  
-@Red.command()
-async def gi(ctx, guild : int):
-  await ctx.message.delete()
-  guild = await bot.fetch_guild(guild)
-  embed = discord.Embed(title = f"Guild Info - {guild.name}")
-  embed.add_field(name = "Server Identification", value = guild.id, inline = False)
-  embed.add_field(name = "Server Owner", value = f"``{guild.owner.name}#{guild.owner.discriminator}`` ({guild.owner.id})", inline = False)
-  embed.add_field(name = "Server Avatar", value = f"[Click Here]({guild.icon_url})", inline = False)
-  embed.set_image(url = guild.icon_url)
-  
-  
-@Red.command()
-async def pb(ctx, member_id, *, reason=None):
-  await ctx.message.delete()
-  member = discord.Object(id=member_id)
-  await ctx.guild.ban(member, reason = reason)
-  member = await bot.fetch_user(member_id)
-  await ctx.channel.send(f"Prebanned ``{member.name}#{member.discriminator}`` for ``{reason}``! :sunglasses:")
-  
-@Red.command()
-async def geolocate(ctx, *, ipaddr: str = '1.3.3.7'): # 
-   await ctx.message.delete()
-   r = requests.get(f'http://extreme-ip-lookup.com/json/{ipaddr}')
-   geo = r.json()
-   em = discord.Embed()
-   fields = [
-       {'name': 'IP', 'value': geo['query']},
-       {'name': 'IP Type', 'value': geo['ipType']},
-       {'name': 'Country', 'value': geo['country']},
-       {'name': 'City', 'value': geo['city']},
-       {'name': 'Continent', 'value': geo['continent']},
-       {'name': 'IPName', 'value': geo['ipName']},
-       {'name': 'ISP', 'value': geo['isp']},
-       {'name': 'Latitute', 'value': geo['lat']},
-       {'name': 'Longitude', 'value': geo['lon']},
-       {'name': 'Region', 'value': geo['region']},
-   ]
-   for field in fields:
-       if field['value']:
-           em.add_field(name=field['name'], value=field['value'], inline=True)
-   return await ctx.send(embed=em) 
- 
+  await ctx.send(ctx.guild.owner)  
 @Red.command()
 async def at(ctx, *, text): # 
    await ctx.message.delete()
@@ -158,25 +80,20 @@ async def at(ctx, *, text): #
    if len('```'+r+'```') > 2000:
        return
    await ctx.send(f"```{r}```")
- 
 @Red.command()
 async def bb(ctx): # 
    await ctx.message.delete()
    await ctx.send('ﾠﾠ'+'\n' * 500 + 'ﾠﾠ')
-
 @Red.command()
 async def gs(ctx, *, message):
    await ctx.message.delete()
   while True:
     await ctx.send(message, delete_after = 0.5)
-    
 @Red.command()
 async def s(ctx, *, message):
    await ctx.message.delete()
   while True:
-    await ctx.send(message)
-                  
-                  
+    await ctx.send(message)                
 @Red.command()
 async def sa(ctx, *, message):
  await ctx.message.delete()
