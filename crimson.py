@@ -7,7 +7,6 @@ from urllib.parse import urlencode
 import urllib.parse, urllib.request, requests, aiohttp
 import re
 from random import randint
-import json
 from discord import Permissions
 import requests
 import random
@@ -26,8 +25,6 @@ from discord.ext import commands, tasks
 import asyncio
 import datetime
 import os
-import time
-import json
 from discord import Permissions
 import praw
 import colorama
@@ -38,7 +35,6 @@ import urllib.parse, urllib.request, requests, aiohttp
 from discord.utils import get
 import string
 import subprocess
-import re
 from discord_webhook import DiscordWebhook
 from itertools import cycle
 
@@ -57,7 +53,7 @@ print(f"""
  ╚═════╝        ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝
                                                                        
                                Version V1     
-                            Made by Anti
+                            Made by Herr Anti
                             {Fore.RED}
                             {Fore.RESET}
 """)
