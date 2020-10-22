@@ -34,15 +34,14 @@ from urllib.parse import urlencode
 import urllib.parse, urllib.request, requests, aiohttp
 from discord.utils import get
 import string
-import subprocess
 from discord_webhook import DiscordWebhook
 from itertools import cycle
 
 user_id = "USER ID"
-bot = commands.Bot(command_prefix='!', bot=False)
+bot = commands.Bot(command_prefix='cm!', bot=False)
 
-#do !help for command info
- 
+token = "token"
+
 print(f"""
 {Fore.RED}    
  ██████╗        ███████╗██████╗  █████╗ ███╗   ███╗███╗   ███╗███████╗██████╗ 
@@ -69,28 +68,21 @@ async def whs(ctx):
 async def serverowner(ctx):
   await ctx.message.delete()
   await ctx.send(ctx.guild.owner)  
-@Red.command()
-async def at(ctx, *, text): # 
-   await ctx.message.delete()
-   r = requests.get(f'http://patorjk.com/software/taag/#p=display&f=Graffiti&t={urllib.parse.quote_plus(text)}').text
-   if len('```'+r+'```') > 2000:
-       return
-   await ctx.send(f"```{r}```")
-@Red.command()
-async def bb(ctx): # 
+@bot.command()
+async def bb(ctx): 
    await ctx.message.delete()
    await ctx.send('ﾠﾠ'+'\n' * 500 + 'ﾠﾠ')
-@Red.command()
+@bot.command()
 async def gs(ctx, *, message):
    await ctx.message.delete()
   while True:
     await ctx.send(message, delete_after = 0.5)
-@Red.command()
+@bot.command()
 async def s(ctx, *, message):
    await ctx.message.delete()
   while True:
     await ctx.send(message)                
-@Red.command()
+@bot.command()
 async def sa(ctx, *, message):
  await ctx.message.delete()
  guild = ctx.guild
@@ -100,5 +92,14 @@ async def sa(ctx, *, message):
        await channel.send(message)
      except:
        pass
+@bot.event
+async def on_message(msg):
+    if msg.author == bot.user:
+        if msg.content == "cs":
+            channel = msg.channel
+            msg = await channel.history(limit=99999).flatten()
+            for msg in msg:
+                if msg.author == bot.user:
+                    await msg.delete()
     
 Red.run('token', bot=False)
